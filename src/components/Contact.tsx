@@ -1,10 +1,10 @@
 "use client";
 import { useState } from "react";
 import { useInView } from "react-intersection-observer";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
+import { Textarea } from "./ui/textarea";
+import { Card, CardContent } from "./ui/card";
 import { Mail, MapPin, Phone, Send } from "lucide-react";
 import { toast } from "sonner";
 
@@ -52,89 +52,101 @@ export const Contact = () => {
             <div className="container mx-auto px-4">
                 <div
                     ref={ref}
-                    className={`max-w-5xl mx-auto transition-all duration-1000 ${inView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+                    className={`max-w-6xl mx-auto transition-all duration-1000 ${inView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
                         }`}
                 >
-                    <h2 className="text-4xl md:text-5xl font-bold text-center mb-6">
-                        Get In <span className="text-gradient">Touch</span>
-                    </h2>
+                    <div className="text-center mb-16">
+                        <h2 className="text-4xl md:text-5xl font-bold mb-4">
+                            Let&apos;s <span className="text-gradient">Talk</span>
+                        </h2>
+                        <p className="text-xl text-foreground/80 mb-2">We&apos;d love to help</p>
+                        <p className="text-lg text-muted-foreground">
+                            Crafting innovative solutions to solve real-world problems
+                        </p>
+                    </div>
 
-                    <p className="text-lg text-foreground/80 text-center mb-12 max-w-2xl mx-auto">
-                        Have a project in mind? Let&apos;s work together to create something amazing
-                    </p>
-
-                    <div className="grid lg:grid-cols-3 gap-8">
-                        <div className="space-y-6">
-                            {contactInfo.map((info, index) => (
-                                <Card
-                                    key={info.label}
-                                    className="glass-card hover:glow-accent transition-all duration-300"
-                                    style={{
-                                        animationDelay: `${index * 0.1}s`,
-                                    }}
-                                >
-                                    <CardContent className="p-6">
-                                        <div className="flex items-center gap-4">
-                                            <div className="p-3 rounded-lg bg-accent/20">
-                                                <info.icon className="h-5 w-5 text-accent" />
+                    <div className="grid lg:grid-cols-2 gap-12">
+                        {/* Contact Information */}
+                        <div className="space-y-8">
+                            <div>
+                                <h3 className="text-2xl font-semibold mb-6 text-foreground">Contact Information</h3>
+                                <div className="space-y-6">
+                                    {contactInfo.map((info, index) => (
+                                        <div
+                                            key={info.label}
+                                            className="flex items-center gap-4 p-4 glass-card rounded-lg hover:glow-primary transition-all duration-300"
+                                            style={{
+                                                animationDelay: `${index * 0.1}s`,
+                                            }}
+                                        >
+                                            <div className="p-3 rounded-lg bg-primary/20">
+                                                <info.icon className="h-5 w-5 text-primary" />
                                             </div>
                                             <div>
-                                                <p className="text-sm text-foreground/60 mb-1">{info.label}</p>
+                                                <p className="text-sm text-muted-foreground mb-1">{info.label}</p>
                                                 <a
                                                     href={info.href}
-                                                    className="font-medium hover:text-accent transition-colors"
+                                                    className="font-medium text-foreground hover:text-primary transition-colors"
                                                 >
                                                     {info.value}
                                                 </a>
                                             </div>
                                         </div>
-                                    </CardContent>
-                                </Card>
-                            ))}
+                                    ))}
+                                </div>
+                            </div>
                         </div>
 
-                        <Card className="lg:col-span-2 glass-card">
-                            <CardContent className="p-6">
-                                <form onSubmit={handleSubmit} className="space-y-6">
+                        {/* Contact Form */}
+                        <div>
+                            <form onSubmit={handleSubmit} className="space-y-6">
+                                <div className="grid md:grid-cols-2 gap-4">
                                     <div>
                                         <Input
-                                            placeholder="Your Name"
+                                            placeholder="Full name"
                                             value={formData.name}
                                             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                                             required
-                                            className="bg-background/50"
+                                            className="bg-card border-border/50 focus:glow"
                                         />
                                     </div>
 
                                     <div>
                                         <Input
                                             type="email"
-                                            placeholder="Your Email"
+                                            placeholder="Email address"
                                             value={formData.email}
                                             onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                                             required
-                                            className="bg-background/50"
+                                            className="bg-card border-border/50 focus:glow"
                                         />
                                     </div>
+                                </div>
 
-                                    <div>
-                                        <Textarea
-                                            placeholder="Your Message"
-                                            rows={6}
-                                            value={formData.message}
-                                            onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                                            required
-                                            className="bg-background/50 resize-none"
-                                        />
-                                    </div>
+                                <div>
+                                    <Input
+                                        placeholder="Subject"
+                                        className="bg-card border-border/50 focus:glow"
+                                    />
+                                </div>
 
-                                    <Button type="submit" size="lg" className="w-full glow-primary">
-                                        <Send className="mr-2 h-4 w-4" />
-                                        Send Message
-                                    </Button>
-                                </form>
-                            </CardContent>
-                        </Card>
+                                <div>
+                                    <Textarea
+                                        placeholder="Message"
+                                        rows={6}
+                                        value={formData.message}
+                                        onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                                        required
+                                        className="bg-card border-border/50 focus:glow resize-none"
+                                    />
+                                </div>
+
+                                <Button type="submit" size="lg" className="w-full bg-gradient-primary hover:bg-gradient-accent glow-primary">
+                                    <Send className="mr-2 h-4 w-4" />
+                                    Send
+                                </Button>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>

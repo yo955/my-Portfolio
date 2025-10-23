@@ -55,7 +55,7 @@ export const Experience = () => {
                   animationDelay: `${index * 0.1}s`,
                 }}
               >
-                <div className="absolute left-0 top-0 -translate-x-[9px] w-4 h-4 rounded-full bg-primary glow-primary" />
+                <div className="absolute left-0 top-0 -translate-x-[9px] w-4 h-4 rounded-full bg-primary glow-primary animate-glow" />
                 
                 <div className="glass-card p-6 hover:glow-primary transition-all duration-300">
                   <div className="flex items-start gap-4">

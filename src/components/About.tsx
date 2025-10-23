@@ -1,6 +1,6 @@
 "use client";
 import { useInView } from "react-intersection-observer";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent } from "./ui/card";
 import { Code2, Sparkles, Rocket } from "lucide-react";
 
 export const About = () => {
@@ -56,7 +56,7 @@ export const About = () => {
                 }}
               >
                 <CardContent className="p-6 text-center">
-                  <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-primary/20 mb-4 group-hover:scale-110 transition-transform">
+                  <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-primary/20 mb-4 group-hover:scale-110 transition-transform glow-primary">
                     <feature.icon className="h-6 w-6 text-primary" />
                   </div>
                   <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>

@@ -1,82 +1,90 @@
 "use client";
-import { useRef, useEffect } from 'react';
-import { Canvas, useFrame } from '@react-three/fiber';
-import { OrbitControls, Sphere, MeshDistortMaterial, Stars } from '@react-three/drei';
-import * as THREE from 'three';
+import { useRef, useEffect, useState } from 'react';
 import { gsap } from 'gsap';
+import Image from 'next/image';
 
-function AnimatedPlanet() {
-  const meshRef = useRef<THREE.Mesh>(null);
+function TypewriterText({ text, delay = 0 }: { text: string; delay?: number }) {
+  const [displayText, setDisplayText] = useState('');
+  const [currentIndex, setCurrentIndex] = useState(0);
 
-  useFrame((state) => {
-    if (meshRef.current) {
-      meshRef.current.rotation.x = state.clock.getElapsedTime() * 0.15;
-      meshRef.current.rotation.y = state.clock.getElapsedTime() * 0.25;
-    }
-  });
-
-  return (
-    <group>
-      <Sphere ref={meshRef} args={[1, 128, 128]} scale={2.2}>
-        <MeshDistortMaterial
-          color="#38bdf8"
-          attach="material"
-          distort={0.5}
-          speed={2}
-          roughness={0.1}
-          metalness={0.9}
-        />
-      </Sphere>
+  useEffect(() => {
+    if (currentIndex < text.length) {
+      const timeout = setTimeout(() => {
+        setDisplayText(prev => prev + text[currentIndex]);
+        setCurrentIndex(prev => prev + 1);
+      }, 100);
       
-      {/* Ring */}
-      <mesh rotation={[Math.PI / 2.5, 0, 0]}>
-        <torusGeometry args={[3, 0.08, 16, 100]} />
-        <meshStandardMaterial
-          color="#9333ea"
-          emissive="#9333ea"
-          emissiveIntensity={0.5}
-          transparent
-          opacity={0.6}
-        />
-      </mesh>
-    </group>
-  );
+      return () => clearTimeout(timeout);
+    }
+  }, [currentIndex, text]);
+
+  return <span>{displayText}</span>;
 }
 
 export default function Hero3D() {
   const heroRef = useRef<HTMLElement>(null);
+  const imageRef = useRef<HTMLDivElement>(null);
+  const [showContent, setShowContent] = useState(false);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      gsap.from('.hero-title', {
-        y: 120,
-        opacity: 0,
-        duration: 1.2,
-        ease: 'power4.out',
+      // Typing animation sequence
+      const tl = gsap.timeline();
+      
+      tl.to('.hero-title', {
+        opacity: 1,
+        duration: 0.5,
+        onComplete: () => setShowContent(true)
       });
 
-      gsap.from('.hero-subtitle', {
-        y: 60,
-        opacity: 0,
-        duration: 1.2,
-        delay: 0.4,
-        ease: 'power4.out',
+      tl.to('.hero-subtitle', {
+        opacity: 1,
+        duration: 0.5,
+        delay: 0.5
       });
 
-      gsap.from('.hero-cta', {
-        y: 40,
-        opacity: 0,
-        duration: 1.2,
-        delay: 0.8,
-        ease: 'power4.out',
-      });
+      // Image animation
+      tl.fromTo(imageRef.current, 
+        { scale: 0, opacity: 0 },
+        { scale: 1, opacity: 1, duration: 1, ease: 'back.out(1.7)' }
+      );
 
-      gsap.from('.hero-badges', {
-        y: 30,
-        opacity: 0,
-        duration: 1,
-        delay: 1.2,
-        ease: 'power3.out',
+      // Floating animation for image
+      tl.to(imageRef.current, {
+        y: -20,
+        duration: 2,
+        repeat: -1,
+        yoyo: true,
+        ease: 'sine.inOut'
+      }, '-=0.5');
+
+      // Animated circles around image
+      tl.to('.floating-circle-1', {
+        rotation: 360,
+        duration: 8,
+        repeat: -1,
+        ease: 'none'
+      }, '-=1');
+
+      tl.to('.floating-circle-2', {
+        rotation: -360,
+        duration: 6,
+        repeat: -1,
+        ease: 'none'
+      }, '-=1');
+
+      tl.to('.floating-circle-3', {
+        rotation: 360,
+        duration: 10,
+        repeat: -1,
+        ease: 'none'
+      }, '-=1');
+
+      tl.to('.hero-cta', {
+        y: 0,
+        opacity: 1,
+        duration: 0.8,
+        ease: 'back.out(1.7)'
       });
     }, heroRef);
 
@@ -92,82 +100,148 @@ export default function Hero3D() {
       ref={heroRef}
       className="relative min-h-screen flex items-center justify-center overflow-hidden"
     >
-      {/* Gradient Overlay */}
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-background/50 to-background z-[1]" />
-      
-      {/* 3D Canvas */}
+      {/* Navigation Bar */}
+      <nav className="absolute top-0 left-0 right-0 z-20 py-6">
+        <div className="container mx-auto px-6">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <div className="text-2xl font-bold text-primary">&lt;/&gt;</div>
+              <span className="text-xl font-semibold text-foreground">Youssef Shaaban</span>
+            </div>
+            
+            <a 
+              href="#contact" 
+              className="px-6 py-2 glass-card text-foreground rounded-lg font-medium hover:glow-primary transition-all duration-300"
+            >
+              Hire Me
+            </a>
+          </div>
+        </div>
+      </nav>
+
+      {/* Animated Background */}
       <div className="absolute inset-0 z-0">
-        <Canvas camera={{ position: [0, 0, 6], fov: 45 }}>
-          <ambientLight intensity={0.3} />
-          <pointLight position={[10, 10, 10]} intensity={1} color="#38bdf8" />
-          <pointLight position={[-10, -10, -10]} intensity={0.5} color="#9333ea" />
-          <spotLight position={[0, 10, 0]} angle={0.3} penumbra={1} intensity={1} color="#34d399" />
-          <Stars
-            radius={100}
-            depth={50}
-            count={3000}
-            factor={4}
-            saturation={0}
-            fade
-            speed={1}
-          />
-          <AnimatedPlanet />
-          <OrbitControls
-            enableZoom={false}
-            enablePan={false}
-            autoRotate
-            autoRotateSpeed={0.5}
-            maxPolarAngle={Math.PI / 2}
-            minPolarAngle={Math.PI / 2}
-          />
-        </Canvas>
+        <div className="absolute inset-0 bg-gradient-to-br from-background via-background to-purple-900/20"></div>
+        
+        {/* Animated background elements */}
+        <div className="absolute top-1/4 left-1/4 w-4 h-4 bg-primary rounded-full animate-pulse glow-primary"></div>
+        <div className="absolute top-3/4 right-1/3 w-3 h-3 bg-accent rounded-full animate-pulse glow-accent"></div>
+        <div className="absolute bottom-1/4 left-1/3 w-2 h-2 bg-secondary rounded-full animate-pulse glow-secondary"></div>
       </div>
 
       {/* Content */}
-      <div className="relative z-10 text-center px-6 max-w-6xl mx-auto">
-        <div className="hero-badges mb-8 flex flex-wrap gap-3 justify-center">
-          <span className="px-4 py-2 bg-primary/10 border border-primary/30 rounded-full text-primary text-sm font-semibold backdrop-blur-sm">
-            ⚡ Frontend Developer
-          </span>
-          <span className="px-4 py-2 bg-secondary/10 border border-secondary/30 rounded-full text-secondary text-sm font-semibold backdrop-blur-sm">
-            🚀 3D Specialist
-          </span>
-        </div>
+      <div className="relative z-10 px-6 max-w-7xl mx-auto w-full">
+        <div className="grid lg:grid-cols-2 gap-12 items-center min-h-screen py-20">
+          {/* Left Side - Text Content */}
+          <div className="text-left">
+            <div className="mb-8">
+              <h2 className="text-xl text-foreground/80 mb-4">Hi, I&apos;m</h2>
+              <h1 className="hero-title text-4xl sm:text-5xl lg:text-6xl font-black mb-6 leading-tight opacity-0">
+                <span className="text-foreground block">
+                  {showContent && <TypewriterText text="Youssef Shaaban" />}
+                </span>
+                <span className="gradient-text block mt-4">
+                  {showContent && <TypewriterText text="Frontend Developer" delay={1} />}
+                </span>
+              </h1>
+            </div>
+            
+            <p className="hero-subtitle text-lg text-muted-foreground mb-8 leading-relaxed opacity-0 max-w-2xl">
+              {showContent && (
+                <TypewriterText 
+                  text="I turn ideas into extraordinary digital experiences. Ready to work on your next project." 
+                  delay={2}
+                />
+              )}
+            </p>
 
-        <h1 className="hero-title text-6xl sm:text-7xl md:text-9xl font-black mb-8 leading-tight">
-          <span className="gradient-text block">Building The</span>
-          <span className="gradient-text block">Future Web</span>
-        </h1>
-        
-        <p className="hero-subtitle text-xl md:text-3xl text-muted-foreground mb-12 max-w-3xl mx-auto leading-relaxed font-light">
-          Creating immersive digital experiences that push the boundaries of web technology
-        </p>
+            {/* Stats */}
+            <div className="flex gap-8 mb-8">
+              <div className="text-center">
+                <div className="text-2xl font-bold text-primary">+50</div>
+                <div className="text-sm text-muted-foreground">Completed Projects</div>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold text-primary">+2</div>
+                <div className="text-sm text-muted-foreground">Years of Experience</div>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold text-primary">100%</div>
+                <div className="text-sm text-muted-foreground">Client Satisfaction</div>
+              </div>
+            </div>
 
-        <div className="hero-cta flex flex-col sm:flex-row gap-6 justify-center items-center">
-          <button
-            onClick={scrollToProjects}
-            className="group relative px-10 py-5 bg-gradient-to-r from-primary via-secondary to-accent rounded-2xl font-bold text-lg overflow-hidden transition-all duration-500 hover:scale-105 shadow-cosmic"
-          >
-            <span className="relative z-10 text-background">Explore My Work</span>
-            <div className="absolute inset-0 bg-gradient-to-r from-accent via-primary to-secondary opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-          </button>
-          
-          <a
-            href="#contact"
-            className="group px-10 py-5 border-2 border-primary/50 text-foreground rounded-2xl font-bold text-lg hover:border-primary hover:bg-primary/10 transition-all duration-500 backdrop-blur-sm relative overflow-hidden"
-          >
-            <span className="relative z-10">Let&apos;s Connect</span>
-            <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-secondary/20 translate-y-full group-hover:translate-y-0 transition-transform duration-500" />
-          </a>
+            {/* CTA Buttons */}
+            <div className="hero-cta flex flex-col sm:flex-row gap-4 opacity-0 translate-y-10">
+              <button
+                onClick={scrollToProjects}
+                className="group relative px-8 py-4 bg-gradient-primary rounded-lg font-semibold text-lg overflow-hidden transition-all duration-300 hover:scale-105 glow-primary"
+              >
+                <span className="relative z-10 text-primary-foreground">View My Work</span>
+                <div className="absolute inset-0 bg-gradient-accent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              </button>
+              
+              <a
+                href="#contact"
+                className="group px-8 py-4 glass-card text-foreground rounded-lg font-semibold text-lg hover:glow-primary transition-all duration-300 relative overflow-hidden border border-primary/30"
+              >
+                <span className="relative z-10">Start Project</span>
+                <div className="absolute inset-0 bg-gradient-cosmic translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
+              </a>
+            </div>
+          </div>
+
+          {/* Right Side - Profile Image with Animation */}
+          <div className="relative flex justify-center items-center">
+            <div className="relative w-80 h-80">
+              {/* Animated Circles */}
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="floating-circle-1 absolute w-96 h-96 border-2 border-primary/30 rounded-full"></div>
+                <div className="floating-circle-2 absolute w-80 h-80 border-2 border-accent/30 rounded-full"></div>
+                <div className="floating-circle-3 absolute w-72 h-72 border-2 border-secondary/30 rounded-full"></div>
+              </div>
+
+              {/* Profile Image Container */}
+              <div
+                ref={imageRef}
+                className="relative w-64 h-64 mx-auto rounded-full overflow-hidden border-4 border-primary/20 shadow-2xl glow-primary opacity-0"
+              >
+                {/* Replace with your actual image */}
+                <div className="w-full h-full bg-gradient-to-br from-primary to-accent flex items-center justify-center">
+                  <Image
+                    src="/profile.jpg"
+                    alt="Youssef Shaaban"
+                    width={256}
+                    height={256}
+                    className="object-cover w-full h-full"
+                  />
+                </div>
+                
+                {/* Hover Effect */}
+                <div className="absolute inset-0 bg-gradient-to-t from-primary/20 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300"></div>
+              </div>
+
+              {/* Floating Elements */}
+              <div className="absolute -top-4 -right-4 w-8 h-8 bg-accent rounded-full animate-bounce glow-accent"></div>
+              <div className="absolute -bottom-4 -left-4 w-6 h-6 bg-secondary rounded-full animate-bounce glow-secondary" style={{ animationDelay: '0.5s' }}></div>
+              <div className="absolute top-1/2 -right-8 w-4 h-4 bg-primary rounded-full animate-ping glow-primary"></div>
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* Scroll Indicator */}
-      <div className="absolute bottom-12 left-1/2 -translate-x-1/2 z-10">
-        <div className="flex flex-col items-center gap-2 animate-bounce">
-          <span className="text-muted-foreground text-sm">Scroll to explore</span>
-          <div className="w-6 h-10 border-2 border-primary/50 rounded-full flex items-start justify-center p-2">
-            <div className="w-1.5 h-3 bg-gradient-to-b from-primary to-secondary rounded-full animate-glow" />
+      {/* Simplified Skills */}
+      <div className="absolute bottom-8 left-0 right-0 z-10">
+        <div className="container mx-auto px-6">
+          <div className="flex justify-center gap-6 flex-wrap">
+            {['React', 'Next.js', 'TypeScript', 'Tailwind', 'Node.js', 'Three.js'].map((tech) => (
+              <div 
+                key={tech}
+                className="glass-card px-4 py-2 rounded-full glow-secondary text-sm font-medium hover:scale-110 transition-transform duration-300"
+              >
+                {tech}
+              </div>
+            ))}
           </div>
         </div>
       </div>

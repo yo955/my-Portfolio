@@ -48,7 +48,7 @@ export default function SpaceBackground() {
     // Animation
     let animationFrameId: number;
     const animate = () => {
-      ctx.fillStyle = 'rgba(10, 10, 30, 0.1)';
+      ctx.fillStyle = 'rgba(5, 5, 15, 0.05)';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       stars.forEach((star) => {
@@ -65,9 +65,9 @@ export default function SpaceBackground() {
           star.x, star.y, 0,
           star.x, star.y, star.size * 3
         );
-        gradient.addColorStop(0, `rgba(56, 189, 248, ${star.opacity})`);
-        gradient.addColorStop(0.5, `rgba(147, 51, 234, ${star.opacity * 0.5})`);
-        gradient.addColorStop(1, 'rgba(56, 189, 248, 0)');
+        gradient.addColorStop(0, `rgba(99, 102, 241, ${star.opacity * 0.6})`);
+        gradient.addColorStop(0.5, `rgba(139, 92, 246, ${star.opacity * 0.3})`);
+        gradient.addColorStop(1, 'rgba(99, 102, 241, 0)');
         
         ctx.fillStyle = gradient;
         ctx.fill();
@@ -95,7 +95,7 @@ export default function SpaceBackground() {
     <canvas
       ref={canvasRef}
       className="fixed inset-0 z-0 pointer-events-none"
-      style={{ background: 'radial-gradient(ellipse at top, rgba(147, 51, 234, 0.15), transparent 50%)' }}
+      style={{ background: 'radial-gradient(ellipse at top, rgba(99, 102, 241, 0.08), transparent 50%)' }}
     />
   );
 }

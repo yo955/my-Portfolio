@@ -50,7 +50,7 @@ export const Skills = () => {
                                 </div>
                                 <div className="h-2 bg-secondary rounded-full overflow-hidden">
                                     <div
-                                        className="h-full bg-gradient-to-r from-primary to-accent rounded-full transition-all duration-1000 ease-out"
+                                        className="h-full bg-gradient-primary rounded-full transition-all duration-1000 ease-out glow-primary"
                                         style={{
                                             width: inView ? `${skill.level}%` : '0%',
                                         }}
@@ -64,7 +64,7 @@ export const Skills = () => {
                         {["JavaScript", "HTML5", "CSS3", "REST API", "GraphQL", "Redux", "Jest", "Webpack", "Vite", "Figma"].map((tech) => (
                             <span
                                 key={tech}
-                                className="px-4 py-2 glass-card text-sm font-medium hover:glow-accent transition-all cursor-default"
+                                className="px-4 py-2 glass-card text-sm font-medium hover:glow-accent transition-all cursor-default glow-secondary"
                             >
                                 {tech}
                             </span>
