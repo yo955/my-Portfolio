@@ -2,7 +2,7 @@
 import { useRef, useEffect, useState } from 'react';
 import { gsap } from 'gsap';
 import Image from 'next/image';
-
+import CVPopup from './CVPopup';
 function TypewriterText({ text, delay = 0 }: { text: string; delay?: number }) {
   const [displayText, setDisplayText] = useState('');
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -13,7 +13,7 @@ function TypewriterText({ text, delay = 0 }: { text: string; delay?: number }) {
         setDisplayText(prev => prev + text[currentIndex]);
         setCurrentIndex(prev => prev + 1);
       }, 100);
-      
+
       return () => clearTimeout(timeout);
     }
   }, [currentIndex, text]);
@@ -25,12 +25,20 @@ export default function Hero3D() {
   const heroRef = useRef<HTMLElement>(null);
   const imageRef = useRef<HTMLDivElement>(null);
   const [showContent, setShowContent] = useState(false);
+  const [isCVPopupOpen, setIsCVPopupOpen] = useState(false);
+
+  // بيانات الـ CV - ضع الروابط الفعلية هنا
+  const cvData = {
+    viewUrl: "/YoussefShaaban-Cv.pdf", // رابط عرض الـ PDF
+    downloadUrl: "/YoussefShaaban-Cv.pdf", // رابط تحميل الـ PDF
+    linkedinUrl: "https://linkedin.com/in/your-profile" // رابط اللينكدإن الخاص بك
+  };
 
   useEffect(() => {
     const ctx = gsap.context(() => {
       // Typing animation sequence
       const tl = gsap.timeline();
-      
+
       tl.to('.hero-title', {
         opacity: 1,
         duration: 0.5,
@@ -44,7 +52,7 @@ export default function Hero3D() {
       });
 
       // Image animation
-      tl.fromTo(imageRef.current, 
+      tl.fromTo(imageRef.current,
         { scale: 0, opacity: 0 },
         { scale: 1, opacity: 1, duration: 1, ease: 'back.out(1.7)' }
       );
@@ -91,9 +99,7 @@ export default function Hero3D() {
     return () => ctx.revert();
   }, []);
 
-  const scrollToProjects = () => {
-    document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth' });
-  };
+
 
   return (
     <section
@@ -108,9 +114,9 @@ export default function Hero3D() {
               <div className="text-2xl font-bold text-primary">&lt;/&gt;</div>
               <span className="text-xl font-semibold text-foreground">Youssef Shaaban</span>
             </div>
-            
-            <a 
-              href="#contact" 
+
+            <a
+              href="#contact"
               className="px-6 py-2 glass-card text-foreground rounded-lg font-medium hover:glow-primary transition-all duration-300"
             >
               Hire Me
@@ -122,7 +128,7 @@ export default function Hero3D() {
       {/* Animated Background */}
       <div className="absolute inset-0 z-0">
         <div className="absolute inset-0 bg-gradient-to-br from-background via-background to-purple-900/20"></div>
-        
+
         {/* Animated background elements */}
         <div className="absolute top-1/4 left-1/4 w-4 h-4 bg-primary rounded-full animate-pulse glow-primary"></div>
         <div className="absolute top-3/4 right-1/3 w-3 h-3 bg-accent rounded-full animate-pulse glow-accent"></div>
@@ -145,11 +151,11 @@ export default function Hero3D() {
                 </span>
               </h1>
             </div>
-            
+
             <p className="hero-subtitle text-lg text-muted-foreground mb-8 leading-relaxed opacity-0 max-w-2xl">
               {showContent && (
-                <TypewriterText 
-                  text="I turn ideas into extraordinary digital experiences. Ready to work on your next project." 
+                <TypewriterText
+                  text="I turn ideas into extraordinary digital experiences. Ready to work on your next project."
                   delay={2}
                 />
               )}
@@ -173,19 +179,23 @@ export default function Hero3D() {
 
             {/* CTA Buttons */}
             <div className="hero-cta flex flex-col sm:flex-row gap-4 opacity-0 translate-y-10">
+              {/* زر عرض الـ CV */}
               <button
-                onClick={scrollToProjects}
+                onClick={() => setIsCVPopupOpen(true)}
                 className="group relative px-8 py-4 bg-gradient-primary rounded-lg font-semibold text-lg overflow-hidden transition-all duration-300 hover:scale-105 glow-primary"
               >
-                <span className="relative z-10 text-primary-foreground">View My Work</span>
+                <span className="relative z-10 text-primary-foreground">View My CV</span>
                 <div className="absolute inset-0 bg-gradient-accent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               </button>
-              
+
+              {/* زر اللينكدإن */}
               <a
-                href="#contact"
+                href={cvData.linkedinUrl}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="group px-8 py-4 glass-card text-foreground rounded-lg font-semibold text-lg hover:glow-primary transition-all duration-300 relative overflow-hidden border border-primary/30"
               >
-                <span className="relative z-10">Start Project</span>
+                <span className="relative z-10">LinkedIn Profile</span>
                 <div className="absolute inset-0 bg-gradient-cosmic translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
               </a>
             </div>
@@ -216,7 +226,7 @@ export default function Hero3D() {
                     className="object-cover w-full h-full"
                   />
                 </div>
-                
+
                 {/* Hover Effect */}
                 <div className="absolute inset-0 bg-gradient-to-t from-primary/20 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300"></div>
               </div>
@@ -234,8 +244,8 @@ export default function Hero3D() {
       <div className="absolute bottom-8 left-0 right-0 z-10">
         <div className="container mx-auto px-6">
           <div className="flex justify-center gap-6 flex-wrap">
-            {['React', 'Next.js', 'TypeScript', 'Tailwind', 'Node.js', 'Three.js'].map((tech) => (
-              <div 
+            {['React', 'Next.js', 'TypeScript', 'Tailwind', 'Gsap', 'Three.js'].map((tech) => (
+              <div
                 key={tech}
                 className="glass-card px-4 py-2 rounded-full glow-secondary text-sm font-medium hover:scale-110 transition-transform duration-300"
               >
@@ -245,6 +255,14 @@ export default function Hero3D() {
           </div>
         </div>
       </div>
+
+      {/* Popup الـ CV */}
+      <CVPopup
+        isOpen={isCVPopupOpen}
+        onClose={() => setIsCVPopupOpen(false)}
+        cvUrl={cvData.viewUrl}
+        downloadUrl={cvData.downloadUrl}
+      />
     </section>
   );
 }

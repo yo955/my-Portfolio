@@ -15,6 +15,9 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Youssef Shaaban Frontend Developer",
   description: "Portfolio website of Youssef Shaaban, a frontend developer specializing in React and modern web technologies.",
+  icons: {
+    icon: "/favicon.ico",
+  },
 };
 
 export default function RootLayout({
